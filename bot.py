@@ -3,6 +3,8 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, ChatJoinRequestHandler, ContextTypes
 import asyncio
 import logging
+from flask import Flask
+import threading
 
 logging.basicConfig(level=logging.INFO)
 
@@ -18,7 +20,6 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
     logging.info(f"📥 Новий запит від {user_name} (ID: {user.id})")
 
     try:
-
         await context.bot.send_message(
             chat_id=user_chat_id,
             text=f"🇺🇦 {user_name.upper()}, ТИ МАЄШ ЗНАТИ ЦЕ!\n\n"
@@ -29,11 +30,10 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
                  f"Жодних маніпуляцій, тільки ФАКТИ та ЖИВІ дебати!",
             parse_mode='Markdown'
         )
-        await asyncio.sleep(2.5)  
-
+        await asyncio.sleep(2.5)
 
         try:
-            with open("Phot.jpg", "rb") as photo_file: 
+            with open("Phot.jpg", "rb") as photo_file:
                 await context.bot.send_photo(
                     chat_id=user_chat_id,
                     photo=photo_file,
@@ -42,7 +42,6 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
                     parse_mode='Markdown'
                 )
         except FileNotFoundError:
-
             try:
                 with open("Phot.png", "rb") as photo_file:
                     await context.bot.send_photo(
@@ -59,8 +58,7 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
                          "👉 [Перейти в канал із трансляцією]({})".format(TARGET_LINK),
                     parse_mode='Markdown'
                 )
-        await asyncio.sleep(2)  
-
+        await asyncio.sleep(2)
 
         await context.bot.send_message(
             chat_id=user_chat_id,
@@ -73,7 +71,6 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
             parse_mode='Markdown'
         )
         await asyncio.sleep(2.5)
-
 
         keyboard = InlineKeyboardMarkup([
             [InlineKeyboardButton("🚨 ОТРИМАТИ ДОСТУП ДО ТРАНСЛЯЦІЇ 🚨", url=TARGET_LINK)]
@@ -89,7 +86,6 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
             parse_mode='Markdown'
         )
         await asyncio.sleep(2)
-
 
         await context.bot.send_message(
             chat_id=user_chat_id,
@@ -110,23 +106,24 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
         logging.warning(f"❌ Не вдалося надіслати {user_name}: {e}")
 
 def main():
+    # Flask для health check
+    flask_app = Flask(__name__)
+
+    @flask_app.route('/')
+    @flask_app.route('/healthz')
+    def health_check():
+        return "OK", 200
+
+    def run_flask():
+        port = int(os.environ.get('PORT', 8080))
+        flask_app.run(host='0.0.0.0', port=port)
+
+    threading.Thread(target=run_flask).start()
+
+    # Telegram бот
     app = ApplicationBuilder().token(TOKEN).build()
     app.add_handler(ChatJoinRequestHandler(handle_join_request))
     logging.info("🚀 Бот запущено. Агітуємо за Верховину!")
-    from flask import Flask
-import threading
-
-flask_app = Flask(__name__)
-
-@flask_app.route('/')
-@flask_app.route('/healthz')
-def health_check():
-    return "OK", 200
-
-def run_flask():
-    flask_app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
-
-threading.Thread(target=run_flask).start()
     app.run_polling()
 
 if __name__ == "__main__":
