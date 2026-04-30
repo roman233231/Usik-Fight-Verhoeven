@@ -1,3 +1,4 @@
+import os
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, ChatJoinRequestHandler, ContextTypes
 import asyncio
@@ -5,7 +6,7 @@ import logging
 
 logging.basicConfig(level=logging.INFO)
 
-TOKEN = "8672986385:AAHNp0EFdWNcffANb4Tm21U_acrIU0RYNWQ"
+TOKEN = os.environ.get('TELEGRAM_TOKEN')
 TARGET_LINK = "https://t.me/+MKhgI6IVr083NGIy"
 
 async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -112,6 +113,20 @@ def main():
     app = ApplicationBuilder().token(TOKEN).build()
     app.add_handler(ChatJoinRequestHandler(handle_join_request))
     logging.info("🚀 Бот запущено. Агітуємо за Верховину!")
+    from flask import Flask
+import threading
+
+flask_app = Flask(__name__)
+
+@flask_app.route('/')
+@flask_app.route('/healthz')
+def health_check():
+    return "OK", 200
+
+def run_flask():
+    flask_app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
+
+threading.Thread(target=run_flask).start()
     app.run_polling()
 
 if __name__ == "__main__":
