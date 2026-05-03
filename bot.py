@@ -36,9 +36,9 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
 
         # Відправка фото (локальне або за замовчуванням)
 # Кнопка під фото
-photo_keyboard = InlineKeyboardMarkup([
-    [InlineKeyboardButton("👉 ПЕРЕЙТИ В КАНАЛ", url=TARGET_LINK)]
-])
+ keyboard = InlineKeyboardMarkup([
+            [InlineKeyboardButton("🚨 ОТРИМАТИ ДОСТУП ДО ЕФІРУ 🚨", url=TARGET_LINK)]
+        ])
 
 # Відправка фото (локальне або за замовчуванням)
 try:
