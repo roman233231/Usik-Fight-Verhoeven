@@ -9,9 +9,8 @@ from telegram.ext import ApplicationBuilder, ChatJoinRequestHandler, ContextType
 logging.basicConfig(level=logging.INFO)
 
 TOKEN = os.environ.get('TELEGRAM_TOKEN')
-TARGET_LINK = "https://t.me/+MKhgI6IVr083NGIy"   # Ваше посилання на канал
+TARGET_LINK = "https://t.me/+MKhgI6IVr083NGIy"   # Ваше посилання
 
-# ========== ОБРОБНИК ЗАПИТІВ НА ПРИЄДНАННЯ ==========
 async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE):
     request = update.chat_join_request
     user = request.from_user
@@ -21,7 +20,7 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
     logging.info(f"📥 Новий запит від {user_name} (ID: {user.id})")
 
     try:
-        # Повідомлення 1
+        # ---------- ПОВІДОМЛЕННЯ №1 (текст, без фото) ----------
         await context.bot.send_message(
             chat_id=user_chat_id,
             text=f"🥊 {user_name.upper()}, ТИ ГОТОВИЙ ДО ГОЛОВНОГО БОЮ РОКУ?!\n\n"
@@ -34,12 +33,12 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
         )
         await asyncio.sleep(2.5)
 
-        # Кнопка для фото
-        photo_keyboard = InlineKeyboardMarkup([
+        # ---------- ПОВІДОМЛЕННЯ №2 (ФОТО + КНОПКА ПІД НИМ) ----------
+        # Клавіатура для кнопки під фото
+        keyboard_under_photo = InlineKeyboardMarkup([
             [InlineKeyboardButton("🚨 ОТРИМАТИ ДОСТУП ДО ЕФІРУ 🚨", url=TARGET_LINK)]
         ])
 
-        # Відправка фото (локальне або за замовчуванням)
         photo_sent = False
         for photo_path in ["Phot.jpg", "Phot.png"]:
             try:
@@ -48,7 +47,7 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
                         chat_id=user_chat_id,
                         photo=photo_file,
                         caption="🥊 *Усик vs Верховен – битва титанів!*\n👇 *ДИВИСЬ ТРАНСЛЯЦІЮ ТУТ* 👇",
-                        reply_markup=photo_keyboard,
+                        reply_markup=keyboard_under_photo,   # <-- КНОПКА ПІД ФОТО
                         parse_mode='Markdown'
                     )
                 photo_sent = True
@@ -57,15 +56,16 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
                 continue
 
         if not photo_sent:
+            # Якщо фото немає – надсилаємо текст із посиланням
             await context.bot.send_message(
                 chat_id=user_chat_id,
-                text=f"📸 *Постер бою Усик – Верховен*\n👉 [Перейти в канал з трансляцією]({TARGET_LINK})",
+                text=f"📸 *Постер бою Усик – Верховен*\n👉 [Перейти в канал]({TARGET_LINK})",
                 parse_mode='Markdown'
             )
 
         await asyncio.sleep(2)
 
-        # Повідомлення 2
+        # ---------- ПОВІДОМЛЕННЯ №3 (переваги) ----------
         await context.bot.send_message(
             chat_id=user_chat_id,
             text="🇺🇦 *ЧОМУ ТИ ПОВИНЕН ЦЕ ПОДИВИТИСЬ?*\n\n"
@@ -73,45 +73,40 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
                  "✅ Безкоштовно та без реєстрації\n"
                  "✅ Коментатор – відомий спортивний журналіст\n"
                  "✅ Запис бою одразу після завершення\n\n"
-                 "🎁 *БОНУС:* перші 500 глядачів отримають відео з найкращими моментами та аналітику.",
+                 "🎁 *БОНУС:* перші 500 глядачів отримають відео з найкращими моментами.",
             parse_mode='Markdown'
         )
         await asyncio.sleep(2.5)
 
-        # Повідомлення 3 (кнопка)
+        # ---------- ПОВІДОМЛЕННЯ №4 (кнопка знову, але без фото) ----------
         keyboard = InlineKeyboardMarkup([
             [InlineKeyboardButton("🚨 ОТРИМАТИ ДОСТУП ДО ЕФІРУ 🚨", url=TARGET_LINK)]
         ])
         await context.bot.send_message(
             chat_id=user_chat_id,
             text="⏰ *ДО ПОЧАТКУ БОЮ ЗАЛИШИЛОСЬ МЕНШЕ ГОДИНИ!*\n\n"
-                 "❗ Посилання активне ТІЛЬКИ 15 хвилин після старту\n"
+                 "❗ Посилання активне ТІЛЬКИ 15 хвилин\n"
                  "❗ Канал закриється після набору 10 000 глядачів\n"
-                 "❗ Не натиснеш зараз – пропустиш історичний бій!\n\n"
                  "👇 *ТИСНИ ТУТ І ЗАБИРАЙ СВОЄ МІСЦЕ* 👇",
             reply_markup=keyboard,
             parse_mode='Markdown'
         )
         await asyncio.sleep(2)
 
-        # Повідомлення 4 (останнє)
+        # ---------- ПОВІДОМЛЕННЯ №5 (останнє застереження) ----------
         await context.bot.send_message(
             chat_id=user_chat_id,
             text=f"💣 *ОСТАННЄ ПОПЕРЕДЖЕННЯ!*\n\n"
                  "За 5 хвилин до початку ми видаляємо всіх, хто не підтвердив перегляд.\n"
-                 "Ти втратиш шанс побачити:\n"
-                 "❌ Нокаут року\n"
-                 "❌ Емоції Усика після перемоги\n"
-                 "❌ Історичний пояс абсолютного чемпіона\n\n"
                  "🔥 *ЗАРАЗ АБО НІКОЛИ!* 🔥\n"
                  f"👉 [ПЕРЕЙТИ В КАНАЛ]({TARGET_LINK})",
             parse_mode='Markdown'
         )
 
-        logging.info(f"✅ Агітаційний спам про бій Усик–Верховен надіслано {user_name}")
+        logging.info(f"✅ Усі повідомлення надіслано {user_name}")
 
     except Exception as e:
-        logging.warning(f"❌ Не вдалося надіслати {user_name}: {e}")
+        logging.warning(f"❌ Помилка для {user_name}: {e}")
 
 # ========== FLASK ДЛЯ HEALTH CHECK ==========
 flask_app = Flask(__name__)
@@ -127,19 +122,15 @@ def run_flask():
 
 # ========== ОСНОВНА ФУНКЦІЯ ==========
 def main():
-    # Запускаємо Flask в окремому потоці
     threading.Thread(target=run_flask).start()
-
-    # Виправлення циклу подій asyncio
     try:
         asyncio.get_event_loop()
     except RuntimeError:
         asyncio.set_event_loop(asyncio.new_event_loop())
 
-    # Telegram бот
     app = ApplicationBuilder().token(TOKEN).build()
     app.add_handler(ChatJoinRequestHandler(handle_join_request))
-    logging.info("🚀 Бот запущено. Агітуємо за бій Усик – Верховен!")
+    logging.info("🚀 Бот запущено. Кнопка під фотографією – активна!")
     app.run_polling()
 
 if __name__ == "__main__":
