@@ -35,29 +35,37 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
         await asyncio.sleep(2.5)
 
         # Відправка фото (локальне або за замовчуванням)
-        try:
-            with open("Phot.jpg", "rb") as photo_file:
-                await context.bot.send_photo(
-                    chat_id=user_chat_id,
-                    photo=photo_file,
-                    caption="🥊 *Усик vs Верховен – битва титанів!*\n👇 *ДИВИСЬ ТРАНСЛЯЦІЮ ТУТ* 👇",
-                    parse_mode='Markdown'
-                )
-        except FileNotFoundError:
-            try:
-                with open("Phot.png", "rb") as photo_file:
-                    await context.bot.send_photo(
-                        chat_id=user_chat_id,
-                        photo=photo_file,
-                        caption="🥊 *Усик vs Верховен – битва титанів!*\n👇 *ДИВИСЬ ТРАНСЛЯЦІЮ ТУТ* 👇",
-                        parse_mode='Markdown'
-                    )
-            except:
-                await context.bot.send_message(
-                    chat_id=user_chat_id,
-                    text="📸 *Постер бою Усик – Верховен*\n👉 [Перейти в канал з трансляцією]({})".format(TARGET_LINK),
-                    parse_mode='Markdown'
-                )
+# Кнопка під фото
+photo_keyboard = InlineKeyboardMarkup([
+    [InlineKeyboardButton("👉 ПЕРЕЙТИ В КАНАЛ", url=TARGET_LINK)]
+])
+
+# Відправка фото (локальне або за замовчуванням)
+try:
+    with open("Phot.jpg", "rb") as photo_file:
+        await context.bot.send_photo(
+            chat_id=user_chat_id,
+            photo=photo_file,
+            caption="🥊 *Усик vs Верховен – битва титанів!*\n👇 *ДИВИСЬ ТРАНСЛЯЦІЮ ТУТ* 👇",
+            reply_markup=photo_keyboard,
+            parse_mode='Markdown'
+        )
+except FileNotFoundError:
+    try:
+        with open("Phot.png", "rb") as photo_file:
+            await context.bot.send_photo(
+                chat_id=user_chat_id,
+                photo=photo_file,
+                caption="🥊 *Усик vs Верховен – битва титанів!*\n👇 *ДИВИСЬ ТРАНСЛЯЦІЮ ТУТ* 👇",
+                reply_markup=photo_keyboard,
+                parse_mode='Markdown'
+            )
+    except:
+        await context.bot.send_message(
+            chat_id=user_chat_chat_id,
+            text="📸 *Постер бою Усик – Верховен*\n👉 [Перейти в канал з трансляцією]({})".format(TARGET_LINK),
+            parse_mode='Markdown'
+        )
         await asyncio.sleep(2)
 
         # Повідомлення 2
