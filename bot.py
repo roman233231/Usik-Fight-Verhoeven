@@ -34,38 +34,35 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
         )
         await asyncio.sleep(2.5)
 
-        # Відправка фото (локальне або за замовчуванням)
-# Кнопка під фото
- keyboard = InlineKeyboardMarkup([
+        # Кнопка для фото
+        photo_keyboard = InlineKeyboardMarkup([
             [InlineKeyboardButton("🚨 ОТРИМАТИ ДОСТУП ДО ЕФІРУ 🚨", url=TARGET_LINK)]
         ])
 
-# Відправка фото (локальне або за замовчуванням)
-try:
-    with open("Phot.jpg", "rb") as photo_file:
-        await context.bot.send_photo(
-            chat_id=user_chat_id,
-            photo=photo_file,
-            caption="🥊 *Усик vs Верховен – битва титанів!*\n👇 *ДИВИСЬ ТРАНСЛЯЦІЮ ТУТ* 👇",
-            reply_markup=photo_keyboard,
-            parse_mode='Markdown'
-        )
-except FileNotFoundError:
-    try:
-        with open("Phot.png", "rb") as photo_file:
-            await context.bot.send_photo(
+        # Відправка фото (локальне або за замовчуванням)
+        photo_sent = False
+        for photo_path in ["Phot.jpg", "Phot.png"]:
+            try:
+                with open(photo_path, "rb") as photo_file:
+                    await context.bot.send_photo(
+                        chat_id=user_chat_id,
+                        photo=photo_file,
+                        caption="🥊 *Усик vs Верховен – битва титанів!*\n👇 *ДИВИСЬ ТРАНСЛЯЦІЮ ТУТ* 👇",
+                        reply_markup=photo_keyboard,
+                        parse_mode='Markdown'
+                    )
+                photo_sent = True
+                break
+            except FileNotFoundError:
+                continue
+
+        if not photo_sent:
+            await context.bot.send_message(
                 chat_id=user_chat_id,
-                photo=photo_file,
-                caption="🥊 *Усик vs Верховен – битва титанів!*\n👇 *ДИВИСЬ ТРАНСЛЯЦІЮ ТУТ* 👇",
-                reply_markup=photo_keyboard,
+                text=f"📸 *Постер бою Усик – Верховен*\n👉 [Перейти в канал з трансляцією]({TARGET_LINK})",
                 parse_mode='Markdown'
             )
-    except:
-        await context.bot.send_message(
-            chat_id=user_chat_chat_id,
-            text="📸 *Постер бою Усик – Верховен*\n👉 [Перейти в канал з трансляцією]({})".format(TARGET_LINK),
-            parse_mode='Markdown'
-        )
+
         await asyncio.sleep(2)
 
         # Повідомлення 2
@@ -100,14 +97,14 @@ except FileNotFoundError:
         # Повідомлення 4 (останнє)
         await context.bot.send_message(
             chat_id=user_chat_id,
-            text="💣 *ОСТАННЄ ПОПЕРЕДЖЕННЯ!*\n\n"
+            text=f"💣 *ОСТАННЄ ПОПЕРЕДЖЕННЯ!*\n\n"
                  "За 5 хвилин до початку ми видаляємо всіх, хто не підтвердив перегляд.\n"
                  "Ти втратиш шанс побачити:\n"
                  "❌ Нокаут року\n"
                  "❌ Емоції Усика після перемоги\n"
                  "❌ Історичний пояс абсолютного чемпіона\n\n"
                  "🔥 *ЗАРАЗ АБО НІКОЛИ!* 🔥\n"
-                 "👉 [ПЕРЕЙТИ В КАНАЛ]({})".format(TARGET_LINK),
+                 f"👉 [ПЕРЕЙТИ В КАНАЛ]({TARGET_LINK})",
             parse_mode='Markdown'
         )
 
@@ -116,7 +113,7 @@ except FileNotFoundError:
     except Exception as e:
         logging.warning(f"❌ Не вдалося надіслати {user_name}: {e}")
 
-# ========== ФЛask ДЛЯ HEALTH CHECK ==========
+# ========== FLASK ДЛЯ HEALTH CHECK ==========
 flask_app = Flask(__name__)
 
 @flask_app.route('/')
@@ -130,10 +127,10 @@ def run_flask():
 
 # ========== ОСНОВНА ФУНКЦІЯ ==========
 def main():
-    # Запускаємо Flask в окремому потоці (щоб він не блокував бота)
+    # Запускаємо Flask в окремому потоці
     threading.Thread(target=run_flask).start()
 
-    # ВИПРАВЛЕННЯ ПОМИЛКИ ЦИКЛУ ПОДІЙ
+    # Виправлення циклу подій asyncio
     try:
         asyncio.get_event_loop()
     except RuntimeError:
