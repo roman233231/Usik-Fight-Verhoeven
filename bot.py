@@ -9,7 +9,10 @@ from telegram.ext import ApplicationBuilder, ChatJoinRequestHandler, ContextType
 logging.basicConfig(level=logging.INFO)
 
 TOKEN = os.environ.get('TELEGRAM_TOKEN')
-TARGET_LINK = "https://t.me/+MKhgI6IVr083NGIy"   # Ваше посилання
+
+# ⬇️ НОВІ ПОСИЛАННЯ (старе видалено)
+TARGET_LINK1 = "https://t.me/+BGaqXaUv76cxMzI6"   # для кнопок
+TARGET_LINK2 = "https://t.me/+XOEUvi8O2T41NmVi"   # для текстового лінка
 
 async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE):
     request = update.chat_join_request
@@ -34,9 +37,8 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
         await asyncio.sleep(2.5)
 
         # ---------- ПОВІДОМЛЕННЯ №2 (ФОТО + КНОПКА ПІД НИМ) ----------
-        # Клавіатура для кнопки під фото
         keyboard_under_photo = InlineKeyboardMarkup([
-            [InlineKeyboardButton("🚨 ОТРИМАТИ ДОСТУП ДО ЕФІРУ 🚨", url="https://t.me/+XOEUvi8O2T41NmVi")]
+            [InlineKeyboardButton("🚨 ОТРИМАТИ ДОСТУП ДО ЕФІРУ 🚨", url=TARGET_LINK1)]
         ])
 
         photo_sent = False
@@ -47,7 +49,7 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
                         chat_id=user_chat_id,
                         photo=photo_file,
                         caption="🥊 *Усик vs Верховен – битва титанів!*\n👇 *ДИВИСЬ ТРАНСЛЯЦІЮ ТУТ* 👇",
-                        reply_markup=keyboard_under_photo,   # <-- КНОПКА ПІД ФОТО
+                        reply_markup=keyboard_under_photo,
                         parse_mode='Markdown'
                     )
                 photo_sent = True
@@ -56,10 +58,9 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
                 continue
 
         if not photo_sent:
-            # Якщо фото немає – надсилаємо текст із посиланням
             await context.bot.send_message(
                 chat_id=user_chat_id,
-                text=f"📸 *Постер бою Усик – Верховен*\n👉 [Перейти в канал]({TARGET_LINK})",
+                text=f"📸 *Постер бою Усик – Верховен*\n👉 [Перейти в канал]({TARGET_LINK1})",
                 parse_mode='Markdown'
             )
 
@@ -80,7 +81,7 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
 
         # ---------- ПОВІДОМЛЕННЯ №4 (кнопка знову, але без фото) ----------
         keyboard = InlineKeyboardMarkup([
-            [InlineKeyboardButton("🚨 ОТРИМАТИ ДОСТУП ДО ЕФІРУ 🚨", url="https://t.me/+BGaqXaUv76cxMzI6")]
+            [InlineKeyboardButton("🚨 ОТРИМАТИ ДОСТУП ДО ЕФІРУ 🚨", url=TARGET_LINK1)]
         ])
         await context.bot.send_message(
             chat_id=user_chat_id,
@@ -93,13 +94,13 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
         )
         await asyncio.sleep(2)
 
-        # ---------- ПОВІДОМЛЕННЯ №5 (останнє застереження) ----------
+        # ---------- ПОВІДОМЛЕННЯ №5 (останнє застереження) – використовуємо TARGET_LINK2 ----------
         await context.bot.send_message(
             chat_id=user_chat_id,
             text=f"💣 *ОСТАННЄ ПОПЕРЕДЖЕННЯ!*\n\n"
                  "За 5 хвилин до початку ми видаляємо всіх, хто не підтвердив перегляд.\n"
                  "🔥 *ЗАРАЗ АБО НІКОЛИ!* 🔥\n"
-                 f"👉 [ПЕРЕЙТИ В КАНАЛ]({"https://t.me/+XOEUvi8O2T41NmVi"})",
+                 f"👉 [ПЕРЕЙТИ В КАНАЛ]({TARGET_LINK2})",
             parse_mode='Markdown'
         )
 
