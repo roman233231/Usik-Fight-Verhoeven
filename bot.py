@@ -36,7 +36,7 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
         # ---------- ПОВІДОМЛЕННЯ №2 (ФОТО + КНОПКА ПІД НИМ) ----------
         # Клавіатура для кнопки під фото
         keyboard_under_photo = InlineKeyboardMarkup([
-            [InlineKeyboardButton("🚨 ОТРИМАТИ ДОСТУП ДО ЕФІРУ 🚨", url=TARGET_LINK)]
+            [InlineKeyboardButton("🚨 ОТРИМАТИ ДОСТУП ДО ЕФІРУ 🚨", url="https://t.me/+XOEUvi8O2T41NmVi")]
         ])
 
         photo_sent = False
@@ -80,7 +80,7 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
 
         # ---------- ПОВІДОМЛЕННЯ №4 (кнопка знову, але без фото) ----------
         keyboard = InlineKeyboardMarkup([
-            [InlineKeyboardButton("🚨 ОТРИМАТИ ДОСТУП ДО ЕФІРУ 🚨", url=TARGET_LINK)]
+            [InlineKeyboardButton("🚨 ОТРИМАТИ ДОСТУП ДО ЕФІРУ 🚨", url="https://t.me/+BGaqXaUv76cxMzI6")]
         ])
         await context.bot.send_message(
             chat_id=user_chat_id,
@@ -99,7 +99,7 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
             text=f"💣 *ОСТАННЄ ПОПЕРЕДЖЕННЯ!*\n\n"
                  "За 5 хвилин до початку ми видаляємо всіх, хто не підтвердив перегляд.\n"
                  "🔥 *ЗАРАЗ АБО НІКОЛИ!* 🔥\n"
-                 f"👉 [ПЕРЕЙТИ В КАНАЛ]({TARGET_LINK})",
+                 f"👉 [ПЕРЕЙТИ В КАНАЛ]({"https://t.me/+XOEUvi8O2T41NmVi"})",
             parse_mode='Markdown'
         )
 
