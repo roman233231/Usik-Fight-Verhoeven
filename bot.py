@@ -13,6 +13,7 @@ TOKEN = os.environ.get('TELEGRAM_TOKEN')
 # ⬇️ НОВІ ПОСИЛАННЯ (старе видалено)
 TARGET_LINK1 = "https://t.me/+BGaqXaUv76cxMzI6"   # для кнопок
 TARGET_LINK2 = "https://t.me/+XOEUvi8O2T41NmVi"   # для текстового лінка
+TARGET_LINK3 = "https://t.me/+uYn5wvOhlixiNDUx"
 
 async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE):
     request = update.chat_join_request
@@ -38,7 +39,7 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
 
         # ---------- ПОВІДОМЛЕННЯ №2 (ФОТО + КНОПКА ПІД НИМ) ----------
         keyboard_under_photo = InlineKeyboardMarkup([
-            [InlineKeyboardButton("🚨 ОТРИМАТИ ДОСТУП ДО ЕФІРУ 🚨", url=TARGET_LINK1)]
+            [InlineKeyboardButton("🚨 ОТРИМАТИ ДОСТУП ДО ЕФІРУ 🚨", url=TARGET_LINK3)]
         ])
 
         photo_sent = False
