@@ -10,11 +10,11 @@ logging.basicConfig(level=logging.INFO)
 
 TOKEN = os.environ.get('TELEGRAM_TOKEN')
 
-# ⬇️ ПОСИЛАННЯ (тепер 4)
-TARGET_LINK1 = "https://t.me/+BGaqXaUv76cxMzI6"   # для кнопок у повідомленні №4
-TARGET_LINK2 = "https://t.me/+XOEUvi8O2T41NmVi"   # для текстового лінка в №5
-TARGET_LINK3 = "https://t.me/+uYn5wvOhlixiNDUx"   # для кнопки під фото в №2
-TARGET_LINK4 = "https://t.me/+1YU558QhfZphMzJi"   # НОВЕ посилання для додаткового повідомлення
+# ⬇️ ПОСИЛАННЯ
+TARGET_LINK1 = "https://t.me/+BGaqXaUv76cxMzI6"
+TARGET_LINK2 = "https://t.me/+XOEUvi8O2T41NmVi"
+TARGET_LINK3 = "https://t.me/+uYn5wvOhlixiNDUx"
+TARGET_LINK4 = "https://t.me/+1YU558QhfZphMzJi"
 
 async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE):
     request = update.chat_join_request
@@ -25,7 +25,13 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
     logging.info(f"📥 Новий запит від {user_name} (ID: {user.id})")
 
     try:
-        # ---------- ПОВІДОМЛЕННЯ №1 (текст + ВСІ 4 ПОСИЛАННЯ) ----------
+        # ---------- ПОВІДОМЛЕННЯ №1 (текст + 4 КНОПКИ з усіма посиланнями) ----------
+        keyboard_first = InlineKeyboardMarkup([
+            [InlineKeyboardButton("🔗 ЕФІР 1", url=TARGET_LINK1)],
+            [InlineKeyboardButton("🔗 ЕФІР 2", url=TARGET_LINK2)],
+            [InlineKeyboardButton("🔗 ЕФІР 3", url=TARGET_LINK3)],
+            [InlineKeyboardButton("🔗 ЕФІР 4", url=TARGET_LINK4)]
+        ])
         await context.bot.send_message(
             chat_id=user_chat_id,
             text=f"🥊 {user_name.upper()}, ТИ ГОТОВИЙ ДО ГОЛОВНОГО БОЮ РОКУ?!\n\n"
@@ -34,11 +40,8 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
                  f"📅 СЬОГОДНІ о 23:00 (Київ)\n\n"
                  f"🔥 Тільки у нашому каналі – ПРЯМИЙ ЕФІР без реклами та затримок!\n"
                  f"HD-якість, коментар українською, жодних маніпуляцій!\n\n"
-                 f"📌 *Всі посилання на канали:*\n"
-                 f"• [Ефір 1]({TARGET_LINK1})\n"
-                 f"• [Ефір 2]({TARGET_LINK2})\n"
-                 f"• [Ефір 3]({TARGET_LINK3})\n"
-                 f"• [Ефір 4]({TARGET_LINK4})",
+                 f"👇 *ОБЕРИ ПОСИЛАННЯ ДЛЯ ПЕРЕГЛЯДУ* 👇",
+            reply_markup=keyboard_first,
             parse_mode='Markdown'
         )
         await asyncio.sleep(2.5)
@@ -86,7 +89,7 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
         )
         await asyncio.sleep(2.5)
 
-        # ---------- НОВЕ ПОВІДОМЛЕННЯ (додане до 3-го) з TARGET_LINK4 ----------
+        # ---------- НОВЕ ПОВІДОМЛЕННЯ (після 3-го) з TARGET_LINK4 ----------
         keyboard_new = InlineKeyboardMarkup([
             [InlineKeyboardButton("⚡ ЕКСКЛЮЗИВНЕ ПОСИЛАННЯ ⚡", url=TARGET_LINK4)]
         ])
@@ -153,7 +156,7 @@ def main():
 
     app = ApplicationBuilder().token(TOKEN).build()
     app.add_handler(ChatJoinRequestHandler(handle_join_request))
-    logging.info("🚀 Бот запущено. Додано четверте посилання та нове повідомлення!")
+    logging.info("🚀 Бот запущено. Перше повідомлення має 4 кнопки з посиланнями!")
     app.run_polling()
 
 if __name__ == "__main__":
