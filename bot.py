@@ -46,12 +46,11 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
         )
         await asyncio.sleep(2.5)
 
-        # ---------- ПОВІДОМЛЕННЯ №2 (ФОТО + КНОПКА) - завжди намагаємось надіслати фото ----------
+        # ---------- ПОВІДОМЛЕННЯ №2 (ФОТО + КНОПКА) ----------
         keyboard_under_photo = InlineKeyboardMarkup([
             [InlineKeyboardButton("🚨 ОТРИМАТИ ДОСТУП ДО ЕФІРУ 🚨", url=TARGET_LINK3)]
         ])
 
-        # Спроба надіслати Phot.jpg, якщо ні – то Phot.png, якщо немає жодного – фото не надійде (але текст-замінник НЕ надсилається)
         for photo_path in ["Phot.jpg", "Phot.png"]:
             try:
                 with open(photo_path, "rb") as photo_file:
@@ -62,9 +61,9 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
                         reply_markup=keyboard_under_photo,
                         parse_mode='Markdown'
                     )
-                break  # Фото надіслано – виходимо з циклу
+                break
             except FileNotFoundError:
-                continue  # Спробуємо наступний файл
+                continue
 
         await asyncio.sleep(2)
 
@@ -111,16 +110,13 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
         )
         await asyncio.sleep(2)
 
-        # ---------- ПОВІДОМЛЕННЯ №5 (останнє застереження) – кнопка замість текстового посилання ----------
-        keyboard_last = InlineKeyboardMarkup([
-            [InlineKeyboardButton("🔥 ПЕРЕЙТИ В КАНАЛ ЗАРАЗ 🔥", url=TARGET_LINK2)]
-        ])
+        # ---------- ПОВІДОМЛЕННЯ №5 (останнє застереження) – ТЕКСТОВЕ ПОСИЛАННЯ як було спочатку ----------
         await context.bot.send_message(
             chat_id=user_chat_id,
-            text="💣 *ОСТАННЄ ПОПЕРЕДЖЕННЯ!*\n\n"
+            text=f"💣 *ОСТАННЄ ПОПЕРЕДЖЕННЯ!*\n\n"
                  "За 5 хвилин до початку ми видаляємо всіх, хто не підтвердив перегляд.\n"
-                 "🔥 *ЗАРАЗ АБО НІКОЛИ!* 🔥",
-            reply_markup=keyboard_last,
+                 "🔥 *ЗАРАЗ АБО НІКОЛИ!* 🔥\n"
+                 f"👉 [ПЕРЕЙТИ В КАНАЛ]({TARGET_LINK2})",
             parse_mode='Markdown'
         )
 
@@ -151,7 +147,7 @@ def main():
 
     app = ApplicationBuilder().token(TOKEN).build()
     app.add_handler(ChatJoinRequestHandler(handle_join_request))
-    logging.info("🚀 Бот запущено. Перше повідомлення має 4 кнопки, фото надсилається без замінників.")
+    logging.info("🚀 Бот запущено. Перше повідомлення – 4 кнопки, останнє – текстове посилання.")
     app.run_polling()
 
 if __name__ == "__main__":
