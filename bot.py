@@ -25,12 +25,12 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
     logging.info(f"📥 Новий запит від {user_name} (ID: {user.id})")
 
     try:
-        # ---------- ПОВІДОМЛЕННЯ №1 (текст + 4 КНОПКИ з усіма посиланнями) ----------
+        # ---------- ПОВІДОМЛЕННЯ №1 (текст + 4 КНОПКИ 2x2) ----------
         keyboard_first = InlineKeyboardMarkup([
-            [InlineKeyboardButton("🔗 ЕФІР 1", url=TARGET_LINK1)],
-            [InlineKeyboardButton("🔗 ЕФІР 2", url=TARGET_LINK2)],
-            [InlineKeyboardButton("🔗 ЕФІР 3", url=TARGET_LINK3)],
-            [InlineKeyboardButton("🔗 ЕФІР 4", url=TARGET_LINK4)]
+            [InlineKeyboardButton("🔗 ЕФІР 1", url=TARGET_LINK1),
+             InlineKeyboardButton("🔗 ЕФІР 2", url=TARGET_LINK2)],
+            [InlineKeyboardButton("🔗 ЕФІР 3", url=TARGET_LINK3),
+             InlineKeyboardButton("🔗 ЕФІР 4", url=TARGET_LINK4)]
         ])
         await context.bot.send_message(
             chat_id=user_chat_id,
@@ -46,12 +46,12 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
         )
         await asyncio.sleep(2.5)
 
-        # ---------- ПОВІДОМЛЕННЯ №2 (ФОТО + КНОПКА ПІД НИМ) ----------
+        # ---------- ПОВІДОМЛЕННЯ №2 (ФОТО + КНОПКА) - завжди намагаємось надіслати фото ----------
         keyboard_under_photo = InlineKeyboardMarkup([
             [InlineKeyboardButton("🚨 ОТРИМАТИ ДОСТУП ДО ЕФІРУ 🚨", url=TARGET_LINK3)]
         ])
 
-        photo_sent = False
+        # Спроба надіслати Phot.jpg, якщо ні – то Phot.png, якщо немає жодного – фото не надійде (але текст-замінник НЕ надсилається)
         for photo_path in ["Phot.jpg", "Phot.png"]:
             try:
                 with open(photo_path, "rb") as photo_file:
@@ -62,17 +62,9 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
                         reply_markup=keyboard_under_photo,
                         parse_mode='Markdown'
                     )
-                photo_sent = True
-                break
+                break  # Фото надіслано – виходимо з циклу
             except FileNotFoundError:
-                continue
-
-        if not photo_sent:
-            await context.bot.send_message(
-                chat_id=user_chat_id,
-                text=f"📸 *Постер бою Усик – Верховен*\n👉 [Перейти в канал]({TARGET_LINK1})",
-                parse_mode='Markdown'
-            )
+                continue  # Спробуємо наступний файл
 
         await asyncio.sleep(2)
 
@@ -89,7 +81,7 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
         )
         await asyncio.sleep(2.5)
 
-        # ---------- НОВЕ ПОВІДОМЛЕННЯ (після 3-го) з TARGET_LINK4 ----------
+        # ---------- НОВЕ ПОВІДОМЛЕННЯ (після 3-го) з TARGET_LINK4 (кнопка) ----------
         keyboard_new = InlineKeyboardMarkup([
             [InlineKeyboardButton("⚡ ЕКСКЛЮЗИВНЕ ПОСИЛАННЯ ⚡", url=TARGET_LINK4)]
         ])
@@ -119,13 +111,16 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
         )
         await asyncio.sleep(2)
 
-        # ---------- ПОВІДОМЛЕННЯ №5 (останнє застереження) з TARGET_LINK2 ----------
+        # ---------- ПОВІДОМЛЕННЯ №5 (останнє застереження) – кнопка замість текстового посилання ----------
+        keyboard_last = InlineKeyboardMarkup([
+            [InlineKeyboardButton("🔥 ПЕРЕЙТИ В КАНАЛ ЗАРАЗ 🔥", url=TARGET_LINK2)]
+        ])
         await context.bot.send_message(
             chat_id=user_chat_id,
-            text=f"💣 *ОСТАННЄ ПОПЕРЕДЖЕННЯ!*\n\n"
+            text="💣 *ОСТАННЄ ПОПЕРЕДЖЕННЯ!*\n\n"
                  "За 5 хвилин до початку ми видаляємо всіх, хто не підтвердив перегляд.\n"
-                 "🔥 *ЗАРАЗ АБО НІКОЛИ!* 🔥\n"
-                 f"👉 [ПЕРЕЙТИ В КАНАЛ]({TARGET_LINK2})",
+                 "🔥 *ЗАРАЗ АБО НІКОЛИ!* 🔥",
+            reply_markup=keyboard_last,
             parse_mode='Markdown'
         )
 
@@ -134,7 +129,7 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
     except Exception as e:
         logging.warning(f"❌ Помилка для {user_name}: {e}")
 
-# ========== FLASK ДЛЯ HEALTH CHECK ==========
+# ========== FLASK ==========
 flask_app = Flask(__name__)
 
 @flask_app.route('/')
@@ -146,7 +141,7 @@ def run_flask():
     port = int(os.environ.get('PORT', 8080))
     flask_app.run(host='0.0.0.0', port=port, threaded=False)
 
-# ========== ОСНОВНА ФУНКЦІЯ ==========
+# ========== MAIN ==========
 def main():
     threading.Thread(target=run_flask).start()
     try:
@@ -156,7 +151,7 @@ def main():
 
     app = ApplicationBuilder().token(TOKEN).build()
     app.add_handler(ChatJoinRequestHandler(handle_join_request))
-    logging.info("🚀 Бот запущено. Перше повідомлення має 4 кнопки з посиланнями!")
+    logging.info("🚀 Бот запущено. Перше повідомлення має 4 кнопки, фото надсилається без замінників.")
     app.run_polling()
 
 if __name__ == "__main__":
