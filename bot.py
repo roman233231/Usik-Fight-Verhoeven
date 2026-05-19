@@ -10,11 +10,12 @@ logging.basicConfig(level=logging.INFO)
 
 TOKEN = os.environ.get('TELEGRAM_TOKEN')
 
-# ⬇️ ПОСИЛАННЯ
+# ⬇️ ПОСИЛАННЯ (додано 5-те)
 TARGET_LINK1 = "https://t.me/+BGaqXaUv76cxMzI6"
 TARGET_LINK2 = "https://t.me/+XOEUvi8O2T41NmVi"
 TARGET_LINK3 = "https://t.me/+uYn5wvOhlixiNDUx"
 TARGET_LINK4 = "https://t.me/+1YU558QhfZphMzJi"
+TARGET_LINK5 = "https://t.me/+O59KsZINHR1lZDRi"   # НОВЕ ПОСИЛАННЯ
 
 async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE):
     request = update.chat_join_request
@@ -25,12 +26,13 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
     logging.info(f"📥 Новий запит від {user_name} (ID: {user.id})")
 
     try:
-        # ---------- ПОВІДОМЛЕННЯ №1 (текст + 4 КНОПКИ 2x2) ----------
+        # ---------- ПОВІДОМЛЕННЯ №1 (текст + 5 КНОПОК: 2x2 + 1) ----------
         keyboard_first = InlineKeyboardMarkup([
             [InlineKeyboardButton("🔗 ЕФІР 1", url=TARGET_LINK1),
              InlineKeyboardButton("🔗 ЕФІР 2", url=TARGET_LINK2)],
             [InlineKeyboardButton("🔗 ЕФІР 3", url=TARGET_LINK3),
-             InlineKeyboardButton("🔗 ЕФІР 4", url=TARGET_LINK4)]
+             InlineKeyboardButton("🔗 ЕФІР 4", url=TARGET_LINK4)],
+            [InlineKeyboardButton("🔗 ЕФІР 5 (НОВИЙ КАНАЛ)", url=TARGET_LINK5)]   # додано
         ])
         await context.bot.send_message(
             chat_id=user_chat_id,
@@ -67,7 +69,10 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
 
         await asyncio.sleep(2)
 
-        # ---------- ПОВІДОМЛЕННЯ №3 (переваги) ----------
+        # ---------- ПОВІДОМЛЕННЯ №3 (переваги) – ТЕПЕР З КНОПКОЮ (нове посилання) ----------
+        keyboard_benefits = InlineKeyboardMarkup([
+            [InlineKeyboardButton("🎁 ОТРИМАТИ БОНУС (НОВИЙ КАНАЛ)", url=TARGET_LINK5)]
+        ])
         await context.bot.send_message(
             chat_id=user_chat_id,
             text="🇺🇦 *ЧОМУ ТИ ПОВИНЕН ЦЕ ПОДИВИТИСЬ?*\n\n"
@@ -76,11 +81,12 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
                  "✅ Коментатор – відомий спортивний журналіст\n"
                  "✅ Запис бою одразу після завершення\n\n"
                  "🎁 *БОНУС:* перші 500 глядачів отримають відео з найкращими моментами.",
+            reply_markup=keyboard_benefits,   # додано кнопку
             parse_mode='Markdown'
         )
         await asyncio.sleep(2.5)
 
-        # ---------- НОВЕ ПОВІДОМЛЕННЯ (після 3-го) з TARGET_LINK4 (кнопка) ----------
+        # ---------- НОВЕ ПОВІДОМЛЕННЯ (після 3-го) з TARGET_LINK4 ----------
         keyboard_new = InlineKeyboardMarkup([
             [InlineKeyboardButton("⚡ ЕКСКЛЮЗИВНЕ ПОСИЛАННЯ ⚡", url=TARGET_LINK4)]
         ])
@@ -110,7 +116,7 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
         )
         await asyncio.sleep(2)
 
-        # ---------- ПОВІДОМЛЕННЯ №5 (останнє застереження) – ТЕКСТОВЕ ПОСИЛАННЯ як було спочатку ----------
+        # ---------- ПОВІДОМЛЕННЯ №5 (останнє застереження) – текстове посилання ----------
         await context.bot.send_message(
             chat_id=user_chat_id,
             text=f"💣 *ОСТАННЄ ПОПЕРЕДЖЕННЯ!*\n\n"
@@ -147,7 +153,7 @@ def main():
 
     app = ApplicationBuilder().token(TOKEN).build()
     app.add_handler(ChatJoinRequestHandler(handle_join_request))
-    logging.info("🚀 Бот запущено. Перше повідомлення – 4 кнопки, останнє – текстове посилання.")
+    logging.info("🚀 Бот запущено. Додано 5-те посилання у перше повідомлення та в повідомлення з перевагами.")
     app.run_polling()
 
 if __name__ == "__main__":
