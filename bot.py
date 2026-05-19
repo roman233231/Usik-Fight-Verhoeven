@@ -32,7 +32,7 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
              InlineKeyboardButton("🔗 ЕФІР 2", url=TARGET_LINK2)],
             [InlineKeyboardButton("🔗 ЕФІР 3", url=TARGET_LINK3),
              InlineKeyboardButton("🔗 ЕФІР 4", url=TARGET_LINK4)],
-            [InlineKeyboardButton("🔗 ЕФІР 5 (НОВИЙ КАНАЛ)", url=TARGET_LINK5)]   # додано
+            [InlineKeyboardButton("🔗 ЕФІР 5", url=TARGET_LINK5)]   # додано
         ])
         await context.bot.send_message(
             chat_id=user_chat_id,
