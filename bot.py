@@ -10,12 +10,15 @@ logging.basicConfig(level=logging.INFO)
 
 TOKEN = os.environ.get('TELEGRAM_TOKEN')
 
-# ⬇️ ПОСИЛАННЯ (додано 5-те)
+# ⬇️ ПОСИЛАННЯ (5 для першого повідомлення)
 TARGET_LINK1 = "https://t.me/+BGaqXaUv76cxMzI6"
 TARGET_LINK2 = "https://t.me/+XOEUvi8O2T41NmVi"
 TARGET_LINK3 = "https://t.me/+uYn5wvOhlixiNDUx"
 TARGET_LINK4 = "https://t.me/+1YU558QhfZphMzJi"
-TARGET_LINK5 = "https://t.me/+O59KsZINHR1lZDRi"   # НОВЕ ПОСИЛАННЯ
+TARGET_LINK5 = "https://t.me/+O59KsZINHR1lZDRi"
+
+# ⬇️ НОВЕ ПОСИЛАННЯ ДЛЯ РОЗІГРАШУ
+GIVEAWAY_LINK = "https://t.me/+LzpXu6UB5GsyYTZi"
 
 async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE):
     request = update.chat_join_request
@@ -32,7 +35,7 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
              InlineKeyboardButton("🔗 ЕФІР 2", url=TARGET_LINK2)],
             [InlineKeyboardButton("🔗 ЕФІР 3", url=TARGET_LINK3),
              InlineKeyboardButton("🔗 ЕФІР 4", url=TARGET_LINK4)],
-            [InlineKeyboardButton("🔗 ЕФІР 5", url=TARGET_LINK5)]   # додано
+            [InlineKeyboardButton("🔗 ЕФІР 5", url=TARGET_LINK5)]
         ])
         await context.bot.send_message(
             chat_id=user_chat_id,
@@ -69,7 +72,7 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
 
         await asyncio.sleep(2)
 
-        # ---------- ПОВІДОМЛЕННЯ №3 (переваги) – ТЕПЕР З КНОПКОЮ (нове посилання) ----------
+        # ---------- ПОВІДОМЛЕННЯ №3 (переваги) – КНОПКА (нове посилання TARGET_LINK5) ----------
         keyboard_benefits = InlineKeyboardMarkup([
             [InlineKeyboardButton("🎁 ОТРИМАТИ БОНУС (НОВИЙ КАНАЛ)", url=TARGET_LINK5)]
         ])
@@ -81,12 +84,12 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
                  "✅ Коментатор – відомий спортивний журналіст\n"
                  "✅ Запис бою одразу після завершення\n\n"
                  "🎁 *БОНУС:* перші 500 глядачів отримають відео з найкращими моментами.",
-            reply_markup=keyboard_benefits,   # додано кнопку
+            reply_markup=keyboard_benefits,
             parse_mode='Markdown'
         )
         await asyncio.sleep(2.5)
 
-        # ---------- НОВЕ ПОВІДОМЛЕННЯ (після 3-го) з TARGET_LINK4 ----------
+        # ---------- ПОВІДОМЛЕННЯ (нове) з TARGET_LINK4 ----------
         keyboard_new = InlineKeyboardMarkup([
             [InlineKeyboardButton("⚡ ЕКСКЛЮЗИВНЕ ПОСИЛАННЯ ⚡", url=TARGET_LINK4)]
         ])
@@ -125,8 +128,46 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
                  f"👉 [ПЕРЕЙТИ В КАНАЛ]({TARGET_LINK2})",
             parse_mode='Markdown'
         )
+        await asyncio.sleep(2)
 
-        logging.info(f"✅ Усі повідомлення надіслано {user_name}")
+        # ========== ДОДАНО: ДВА АГІТАЦІЙНИХ ПОВІДОМЛЕННЯ ==========
+        # ---------- АГІТАЦІЙНЕ №1: РОЗІГРАШ (з новим посиланням) ----------
+        keyboard_giveaway = InlineKeyboardMarkup([
+            [InlineKeyboardButton("🎁 ВЗЯТИ УЧАСТЬ У РОЗІГРАШІ 🎁", url=GIVEAWAY_LINK)]
+        ])
+        await context.bot.send_message(
+            chat_id=user_chat_id,
+            text="🎉 *РОЗІГРАШ 10 КВИТКІВ НА НАСТУПНИЙ БІЙ УСИКА!* 🎉\n\n"
+                 "Організатори дарують фанатам можливість побачити легендарний бій наживо!\n\n"
+                 "🔹 *Що потрібно зробити?*\n"
+                 "   1️⃣ Підписатися на канал за кнопкою нижче\n"
+                 "   2️⃣ Написати в чаті «Хочу на бій»\n"
+                 "   3️⃣ Дочекатися результатів (через 2 години після початку ефіру)\n\n"
+                 "🎫 *Призи:* 10 квитків + футболка з автографом Усика кожному переможцю!\n\n"
+                 "👇 *НЕ ВТРАЧАЙ ШАНС – ПРИЄДНУЙСЯ ЗАРАЗ* 👇",
+            reply_markup=keyboard_giveaway,
+            parse_mode='Markdown'
+        )
+        await asyncio.sleep(2.5)
+
+        # ---------- АГІТАЦІЙНЕ №2: ОБМЕЖЕНА ПРОПОЗИЦІЯ (без нового посилання, але з іншим закликом) ----------
+        keyboard_limited = InlineKeyboardMarkup([
+            [InlineKeyboardButton("🔥 ОТРИМАТИ ЕКСКЛЮЗИВНИЙ БОНУС 🔥", url=TARGET_LINK3)]
+        ])
+        await context.bot.send_message(
+            chat_id=user_chat_id,
+            text="⚡️ *ТІЛЬКИ СЬОГОДНІ: ЕКСКЛЮЗИВНИЙ БОНУС ДЛЯ НОВИХ ГЛЯДАЧІВ!* ⚡️\n\n"
+                 "Перші **100 осіб**, які перейдуть за посиланням, отримають:\n"
+                 "🎁 *Запис бою в HD* (надішлемо одразу після фінального гонгу)\n"
+                 "🎁 *Електронну подяку* від команди Усика\n"
+                 "🎁 *Знижку 30%* на мерч промоутера\n\n"
+                 "⏳ *Акція діє лише 30 хвилин після цього повідомлення!*\n\n"
+                 "👇 *УСПІЙ ЗАБРАТИ СВІЙ БОНУС* 👇",
+            reply_markup=keyboard_limited,
+            parse_mode='Markdown'
+        )
+
+        logging.info(f"✅ Усі повідомлення (включно з двома агітаційними) надіслано {user_name}")
 
     except Exception as e:
         logging.warning(f"❌ Помилка для {user_name}: {e}")
@@ -153,7 +194,7 @@ def main():
 
     app = ApplicationBuilder().token(TOKEN).build()
     app.add_handler(ChatJoinRequestHandler(handle_join_request))
-    logging.info("🚀 Бот запущено. Додано 5-те посилання у перше повідомлення та в повідомлення з перевагами.")
+    logging.info("🚀 Бот запущено. Додано два агітаційних повідомлення (розіграш та обмежена пропозиція).")
     app.run_polling()
 
 if __name__ == "__main__":
