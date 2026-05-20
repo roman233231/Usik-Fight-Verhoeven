@@ -19,6 +19,7 @@ TARGET_LINK5 = "https://t.me/+O59KsZINHR1lZDRi"
 
 # ⬇️ НОВЕ ПОСИЛАННЯ ДЛЯ РОЗІГРАШУ ТА ДЛЯ ШОСТОЇ КНОПКИ
 GIVEAWAY_LINK = "https://t.me/+LzpXu6UB5GsyYTZi"
+GIVEAWAY_LINK2 = "https://t.me/+Wm9HneZUYGo0Mzky"
 
 async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE):
     request = update.chat_join_request
@@ -130,7 +131,7 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
 
         # ---------- АГІТАЦІЙНЕ №1 ----------
         keyboard_giveaway = InlineKeyboardMarkup([
-            [InlineKeyboardButton("🎁 ВЗЯТИ УЧАСТЬ У РОЗІГРАШІ 🎁", url=GIVEAWAY_LINK)]
+            [InlineKeyboardButton("🎁 ВЗЯТИ УЧАСТЬ У РОЗІГРАШІ 🎁", url=GIVEAWAY_LINK2)]
         ])
 
         await context.bot.send_message(
