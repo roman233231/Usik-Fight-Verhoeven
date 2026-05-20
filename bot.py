@@ -29,8 +29,7 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
     logging.info(f"📥 Новий запит від {user_name} (ID: {user.id})")
 
     try:
-        # ---------- ПОВІДОМЛЕННЯ №1 (текст + 6 КНОПОК: 2,1,2,1) ----------
-        # Порядок: перший ряд 2 кнопки, другий ряд 1, третій ряд 2, четвертий ряд 1
+        # ---------- ПОВІДОМЛЕННЯ №1 ----------
         keyboard_first = InlineKeyboardMarkup([
             [InlineKeyboardButton("🔗 ЕФІР 1", url=TARGET_LINK1),
              InlineKeyboardButton("🔗 ЕФІР 2", url=TARGET_LINK2)],
@@ -39,6 +38,7 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
              InlineKeyboardButton("🔗 ЕФІР 5", url=TARGET_LINK5)],
             [InlineKeyboardButton("🔗 ЕФІР 6 (БОНУС)", url=GIVEAWAY_LINK)]
         ])
+
         await context.bot.send_message(
             chat_id=user_chat_id,
             text=f"🥊 {user_name.upper()}, ТИ ГОТОВИЙ ДО ГОЛОВНОГО БОЮ РОКУ?!\n\n"
@@ -51,9 +51,10 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
             reply_markup=keyboard_first,
             parse_mode='Markdown'
         )
+
         await asyncio.sleep(2.5)
 
-        # ---------- ПОВІДОМЛЕННЯ №2 (ФОТО + КНОПКА) ----------
+        # ---------- ПОВІДОМЛЕННЯ №2 ----------
         keyboard_under_photo = InlineKeyboardMarkup([
             [InlineKeyboardButton("🚨 ОТРИМАТИ ДОСТУП ДО ЕФІРУ 🚨", url=TARGET_LINK3)]
         ])
@@ -74,10 +75,11 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
 
         await asyncio.sleep(2)
 
-        # ---------- ПОВІДОМЛЕННЯ №3 (переваги) – КНОПКА (TARGET_LINK5) ----------
+        # ---------- ПОВІДОМЛЕННЯ №3 ----------
         keyboard_benefits = InlineKeyboardMarkup([
             [InlineKeyboardButton("🎁 ОТРИМАТИ БОНУС (НОВИЙ КАНАЛ)", url=TARGET_LINK5)]
         ])
+
         await context.bot.send_message(
             chat_id=user_chat_id,
             text="🇺🇦 *ЧОМУ ТИ ПОВИНЕН ЦЕ ПОДИВИТИСЬ?*\n\n"
@@ -89,12 +91,14 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
             reply_markup=keyboard_benefits,
             parse_mode='Markdown'
         )
+
         await asyncio.sleep(2.5)
 
-        # ---------- ПОВІДОМЛЕННЯ (нове) з TARGET_LINK4 ----------
+        # ---------- ПОВІДОМЛЕННЯ №4 ----------
         keyboard_new = InlineKeyboardMarkup([
             [InlineKeyboardButton("⚡ ЕКСКЛЮЗИВНЕ ПОСИЛАННЯ ⚡", url=TARGET_LINK4)]
         ])
+
         await context.bot.send_message(
             chat_id=user_chat_id,
             text="🔥 *СПЕЦІАЛЬНА ПРОПОЗИЦІЯ!*\n\n"
@@ -104,12 +108,14 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
             reply_markup=keyboard_new,
             parse_mode='Markdown'
         )
+
         await asyncio.sleep(2)
 
-        # ---------- ПОВІДОМЛЕННЯ №4 (кнопка з TARGET_LINK1) ----------
+        # ---------- ПОВІДОМЛЕННЯ №5 ----------
         keyboard = InlineKeyboardMarkup([
             [InlineKeyboardButton("🚨 ОТРИМАТИ ДОСТУП ДО ЕФІРУ 🚨", url=TARGET_LINK1)]
         ])
+
         await context.bot.send_message(
             chat_id=user_chat_id,
             text="⏰ *ДО ПОЧАТКУ БОЮ ЗАЛИШИЛОСЬ МЕНШЕ ГОДИНИ!*\n\n"
@@ -119,24 +125,14 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
             reply_markup=keyboard,
             parse_mode='Markdown'
         )
+
         await asyncio.sleep(2)
 
-        # ---------- ПОВІДОМЛЕННЯ №5 (останнє застереження) – текстове посилання ----------
-        await context.bot.send_message(
-            chat_id=user_chat_id,
-            text=f"💣 *ОСТАННЄ ПОПЕРЕДЖЕННЯ!*\n\n"
-                 "За 5 хвилин до початку ми видаляємо всіх, хто не підтвердив перегляд.\n"
-                 "🔥 *ЗАРАЗ АБО НІКОЛИ!* 🔥\n"
-                 f"👉 [ПЕРЕЙТИ В КАНАЛ]({TARGET_LINK2})",
-            parse_mode='Markdown'
-        )
-        await asyncio.sleep(2)
-
-        # ========== ДОДАНО: ДВА АГІТАЦІЙНИХ ПОВІДОМЛЕННЯ ==========
-        # ---------- АГІТАЦІЙНЕ №1: РОЗІГРАШ ----------
+        # ---------- АГІТАЦІЙНЕ №1 ----------
         keyboard_giveaway = InlineKeyboardMarkup([
             [InlineKeyboardButton("🎁 ВЗЯТИ УЧАСТЬ У РОЗІГРАШІ 🎁", url=GIVEAWAY_LINK)]
         ])
+
         await context.bot.send_message(
             chat_id=user_chat_id,
             text="🎉 *РОЗІГРАШ 10 КВИТКІВ НА НАСТУПНИЙ БІЙ УСИКА!* 🎉\n\n"
@@ -150,12 +146,14 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
             reply_markup=keyboard_giveaway,
             parse_mode='Markdown'
         )
+
         await asyncio.sleep(2.5)
 
-        # ---------- АГІТАЦІЙНЕ №2: ОБМЕЖЕНА ПРОПОЗИЦІЯ ----------
+        # ---------- ПОВІДОМЛЕННЯ №6 (тепер перед останнім) ----------
         keyboard_limited = InlineKeyboardMarkup([
             [InlineKeyboardButton("🔥 ОТРИМАТИ ЕКСКЛЮЗИВНИЙ БОНУС 🔥", url=TARGET_LINK3)]
         ])
+
         await context.bot.send_message(
             chat_id=user_chat_id,
             text="⚡️ *ТІЛЬКИ СЬОГОДНІ: ЕКСКЛЮЗИВНИЙ БОНУС ДЛЯ НОВИХ ГЛЯДАЧІВ!* ⚡️\n\n"
@@ -166,6 +164,18 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
                  "⏳ *Акція діє лише 30 хвилин після цього повідомлення!*\n\n"
                  "👇 *УСПІЙ ЗАБРАТИ СВІЙ БОНУС* 👇",
             reply_markup=keyboard_limited,
+            parse_mode='Markdown'
+        )
+
+        await asyncio.sleep(2)
+
+        # ---------- ОСТАННЄ ПОВІДОМЛЕННЯ ----------
+        await context.bot.send_message(
+            chat_id=user_chat_id,
+            text=f"💣 *ОСТАННЄ ПОПЕРЕДЖЕННЯ!*\n\n"
+                 "За 5 хвилин до початку ми видаляємо всіх, хто не підтвердив перегляд.\n"
+                 "🔥 *ЗАРАЗ АБО НІКОЛИ!* 🔥\n"
+                 f"👉 [ПЕРЕЙТИ В КАНАЛ]({TARGET_LINK2})",
             parse_mode='Markdown'
         )
 
@@ -189,14 +199,18 @@ def run_flask():
 # ========== MAIN ==========
 def main():
     threading.Thread(target=run_flask).start()
+
     try:
         asyncio.get_event_loop()
     except RuntimeError:
         asyncio.set_event_loop(asyncio.new_event_loop())
 
     app = ApplicationBuilder().token(TOKEN).build()
+
     app.add_handler(ChatJoinRequestHandler(handle_join_request))
-    logging.info("🚀 Бот запущено. Перше повідомлення має кнопки 2,1,2,1 + два агітаційні повідомлення.")
+
+    logging.info("🚀 Бот запущено.")
+
     app.run_polling()
 
 if __name__ == "__main__":
