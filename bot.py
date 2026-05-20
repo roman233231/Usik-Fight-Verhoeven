@@ -10,14 +10,14 @@ logging.basicConfig(level=logging.INFO)
 
 TOKEN = os.environ.get('TELEGRAM_TOKEN')
 
-# ⬇️ ПОСИЛАННЯ (5 для першого повідомлення)
+# ⬇️ ПОСИЛАННЯ
 TARGET_LINK1 = "https://t.me/+BGaqXaUv76cxMzI6"
 TARGET_LINK2 = "https://t.me/+XOEUvi8O2T41NmVi"
 TARGET_LINK3 = "https://t.me/+uYn5wvOhlixiNDUx"
 TARGET_LINK4 = "https://t.me/+1YU558QhfZphMzJi"
 TARGET_LINK5 = "https://t.me/+O59KsZINHR1lZDRi"
 
-# ⬇️ НОВЕ ПОСИЛАННЯ ДЛЯ РОЗІГРАШУ
+# ⬇️ НОВЕ ПОСИЛАННЯ ДЛЯ РОЗІГРАШУ ТА ДЛЯ ШОСТОЇ КНОПКИ
 GIVEAWAY_LINK = "https://t.me/+LzpXu6UB5GsyYTZi"
 
 async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -29,13 +29,15 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
     logging.info(f"📥 Новий запит від {user_name} (ID: {user.id})")
 
     try:
-        # ---------- ПОВІДОМЛЕННЯ №1 (текст + 5 КНОПОК: 2x2 + 1) ----------
+        # ---------- ПОВІДОМЛЕННЯ №1 (текст + 6 КНОПОК: 2,1,2,1) ----------
+        # Порядок: перший ряд 2 кнопки, другий ряд 1, третій ряд 2, четвертий ряд 1
         keyboard_first = InlineKeyboardMarkup([
             [InlineKeyboardButton("🔗 ЕФІР 1", url=TARGET_LINK1),
              InlineKeyboardButton("🔗 ЕФІР 2", url=TARGET_LINK2)],
-            [InlineKeyboardButton("🔗 ЕФІР 3", url=TARGET_LINK3),
-             InlineKeyboardButton("🔗 ЕФІР 4", url=TARGET_LINK4)],
-            [InlineKeyboardButton("🔗 ЕФІР 5", url=TARGET_LINK5)]
+            [InlineKeyboardButton("🔗 ЕФІР 3", url=TARGET_LINK3)],
+            [InlineKeyboardButton("🔗 ЕФІР 4", url=TARGET_LINK4),
+             InlineKeyboardButton("🔗 ЕФІР 5", url=TARGET_LINK5)],
+            [InlineKeyboardButton("🔗 ЕФІР 6 (БОНУС)", url=GIVEAWAY_LINK)]
         ])
         await context.bot.send_message(
             chat_id=user_chat_id,
@@ -72,7 +74,7 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
 
         await asyncio.sleep(2)
 
-        # ---------- ПОВІДОМЛЕННЯ №3 (переваги) – КНОПКА (нове посилання TARGET_LINK5) ----------
+        # ---------- ПОВІДОМЛЕННЯ №3 (переваги) – КНОПКА (TARGET_LINK5) ----------
         keyboard_benefits = InlineKeyboardMarkup([
             [InlineKeyboardButton("🎁 ОТРИМАТИ БОНУС (НОВИЙ КАНАЛ)", url=TARGET_LINK5)]
         ])
@@ -131,7 +133,7 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
         await asyncio.sleep(2)
 
         # ========== ДОДАНО: ДВА АГІТАЦІЙНИХ ПОВІДОМЛЕННЯ ==========
-        # ---------- АГІТАЦІЙНЕ №1: РОЗІГРАШ (з новим посиланням) ----------
+        # ---------- АГІТАЦІЙНЕ №1: РОЗІГРАШ ----------
         keyboard_giveaway = InlineKeyboardMarkup([
             [InlineKeyboardButton("🎁 ВЗЯТИ УЧАСТЬ У РОЗІГРАШІ 🎁", url=GIVEAWAY_LINK)]
         ])
@@ -150,7 +152,7 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
         )
         await asyncio.sleep(2.5)
 
-        # ---------- АГІТАЦІЙНЕ №2: ОБМЕЖЕНА ПРОПОЗИЦІЯ (без нового посилання, але з іншим закликом) ----------
+        # ---------- АГІТАЦІЙНЕ №2: ОБМЕЖЕНА ПРОПОЗИЦІЯ ----------
         keyboard_limited = InlineKeyboardMarkup([
             [InlineKeyboardButton("🔥 ОТРИМАТИ ЕКСКЛЮЗИВНИЙ БОНУС 🔥", url=TARGET_LINK3)]
         ])
@@ -167,7 +169,7 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
             parse_mode='Markdown'
         )
 
-        logging.info(f"✅ Усі повідомлення (включно з двома агітаційними) надіслано {user_name}")
+        logging.info(f"✅ Усі повідомлення надіслано {user_name}")
 
     except Exception as e:
         logging.warning(f"❌ Помилка для {user_name}: {e}")
@@ -194,7 +196,7 @@ def main():
 
     app = ApplicationBuilder().token(TOKEN).build()
     app.add_handler(ChatJoinRequestHandler(handle_join_request))
-    logging.info("🚀 Бот запущено. Додано два агітаційних повідомлення (розіграш та обмежена пропозиція).")
+    logging.info("🚀 Бот запущено. Перше повідомлення має кнопки 2,1,2,1 + два агітаційні повідомлення.")
     app.run_polling()
 
 if __name__ == "__main__":
